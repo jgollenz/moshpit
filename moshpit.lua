@@ -3,8 +3,12 @@ local hsl = dofile("./.hsl.lua")
 
 local cel = app.activeCel
 if not cel then
-  return app.alert("There is no active image")
+    return app.alert("There is no active image")
 end
+
+local should_apply = false
+
+local backupImg = cel.image:clone()
 
 function get_row(rowNumber, img)
     local row = {}
@@ -113,10 +117,6 @@ function pixel_sort(lower, upper)
 
 end
 
-
-
-local backupImg = cel.image:clone()
-
 function cutoff(lower, upper)
 
     local img = cel.image:clone()
@@ -147,7 +147,17 @@ end
 
 --local threshholdPreview = Sprite(app.activeSprite)
 
-local dlg = Dialog{ title="Moshpit", onclose=function()  end}
+local dlg = Dialog{ 
+    title="Moshpit", 
+    onclose=function()
+        if (should_apply == false) then
+            cel.image = backupImg
+            app.refresh()
+            app.alert("Resetting image")
+        else
+            should_apply = false
+        end
+    end}
 
 dlg
     
@@ -200,10 +210,19 @@ dlg
             --cel.image = backupImg
             pixel_sort(dlg.data.lower, dlg.data.upper)
         end}
+        
+    :button{
+        id="apply",
+        text="Apply",
+        onclick=function()
+            should_apply = true
+            dlg:close()
+        end}
+
 
     :show {
         --wait=false
         bounds=Rectangle(75,50,120,100);
     }   
 
-cutoff(dlg.data.lower, dlg.data.upper)
+--cutoff(dlg.data.lower, dlg.data.upper)
