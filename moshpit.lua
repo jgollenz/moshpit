@@ -201,5 +201,9 @@ dlg
             pixel_sort(dlg.data.lower, dlg.data.upper)
         end}
 
-    :show()--{ wait=false }
+    :show {
+        --wait=false
+        bounds=Rectangle(75,50,120,100);
+    }   
+
 cutoff(dlg.data.lower, dlg.data.upper)
