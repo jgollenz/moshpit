@@ -7,10 +7,12 @@ if not cel then
     return app.alert("There is no active image")
 end
 
+-- starting position / dimensions
 local xAnchor = 75
 local yAnchor = 50
 local dialogWidth = 120
 local dialogHeight = 100
+
 local should_apply = false
 
 local backupImg = cel.image:clone()
@@ -212,8 +214,9 @@ dlg
     :button{
         id="shift",
         text="Shift",
-        onclick=function() 
-            shifter.show(xAnchor, yAnchor+dialogHeight)
+        onclick=function()
+            local bounds = dlg.bounds
+            shifter.show(bounds.x, bounds.y+bounds.height)
         end
 }
 
