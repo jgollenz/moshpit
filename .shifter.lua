@@ -1,8 +1,8 @@
 local util = dofile("./.util.lua")
 
 -- bounds
-local width = 100
-local height = 100
+local width = 200
+local height = 200
 
 shifter = {}
 

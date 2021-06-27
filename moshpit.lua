@@ -7,6 +7,10 @@ if not cel then
     return app.alert("There is no active image")
 end
 
+local xAnchor = 75
+local yAnchor = 50
+local dialogWidth = 120
+local dialogHeight = 100
 local should_apply = false
 
 local backupImg = cel.image:clone()
@@ -200,6 +204,7 @@ dlg
         onclick=function()
             --cel.image = backupImg
             pixel_sort(dlg.data.lower, dlg.data.upper)
+            --dlg:close()
         end}
         
     :button{
@@ -216,13 +221,13 @@ dlg
         id="shift",
         text="Shift",
         onclick=function() 
-            shifter.show(75, 150, 300, 250) --todo: magic numbers
+            shifter.show(xAnchor, yAnchor+dialogHeight)
         end
 }
 
     :show {
         wait=false,
-        bounds=Rectangle(75,50,120,100); -- todo: magic number
+        bounds=Rectangle(xAnchor,yAnchor,dialogWidth,dialogHeight); 
     }   
 
 --cutoff(dlg.data.lower, dlg.data.upper)
