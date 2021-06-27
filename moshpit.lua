@@ -156,6 +156,10 @@ local dlg = Dialog{
         else
             should_apply = false
         end
+        
+        for _,subDialog in pairs(subDialogs) do
+            subDialog:close()
+        end
     end}
 
 dlg
