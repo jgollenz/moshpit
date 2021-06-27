@@ -1,5 +1,6 @@
 local util = dofile("./.util.lua")
 local hsl = dofile("./.hsl.lua")
+local shifter = dofile("./.shifter.lua")
 
 local cel = app.activeCel
 if not cel then
@@ -208,7 +209,16 @@ dlg
             should_apply = true
             dlg:close()
         end}
-
+     
+    :newrow()
+        
+    :button{
+        id="shift",
+        text="Shift",
+        onclick=function() 
+            shifter.show(75, 150, 300, 250) --todo: magic numbers
+        end
+}
 
     :show {
         wait=false,
