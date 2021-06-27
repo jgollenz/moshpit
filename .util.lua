@@ -28,4 +28,14 @@ util["toggle_UI_Elements"] = function (toggleState, elements, dialog)
     end
 end
 
+util["get_row"] = function (rowNumber, img)
+    local row = {}
+
+    for i=0, img.width-1, 1 do
+        table.insert(row, img:getPixel(i, rowNumber))
+    end
+
+    return row
+end
+
 return util

@@ -10,16 +10,6 @@ local should_apply = false
 
 local backupImg = cel.image:clone()
 
-function get_row(rowNumber, img)
-    local row = {}
-
-    for i=0, img.width-1, 1 do
-        table.insert(row, img:getPixel(i, rowNumber))
-    end
-
-    return row
-end
-
 function filter_row(row, constraint, lower, upper)
     local filtered_row = {}
 
@@ -96,7 +86,7 @@ function pixel_sort(lower, upper)
     if img.colorMode == ColorMode.RGB then
         local rgba = app.pixelColor.rgba
         for rowNumber=0, row_count, 1 do
-            row = get_row(rowNumber, img)
+            row = util.get_row(rowNumber, img)
             row = filter_row(row, hsl.lightness_from_rgb, lower, upper)
             for i, hue, position, pixel in sort_row(row, hsl.hue_from_rgb) do
                 local red = app.pixelColor.rgbaR(pixel)
@@ -221,8 +211,8 @@ dlg
 
 
     :show {
-        --wait=false
-        bounds=Rectangle(75,50,120,100);
+        wait=false,
+        bounds=Rectangle(75,50,120,100); -- todo: magic number
     }   
 
 --cutoff(dlg.data.lower, dlg.data.upper)
