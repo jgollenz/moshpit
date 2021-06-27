@@ -184,14 +184,6 @@ dlg
             cutoff(dlg.data.lower, dlg.data.upper)
         end} 
 
---[[    :check{ 
-        id="check", 
-        label="show", 
-        selected=false, 
-        onclick=function()
-            toggleUIElements(dlg.data.check, { "test" }, dlg)
-        end } ]]--
-
     :entry{
         id="test",
         label="test",

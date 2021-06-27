@@ -44,13 +44,15 @@ end
 
 shifter["show"] = function(x,y)
 
-    local backup_img = app.activeCel.image:clone()
+    local image = app.activeCel.image
+    local backup_img = image:clone()
+    
 
     local dlg = Dialog{
         title="Shift Rows",
         onclose=function()
             if (should_apply == false) then
-                app.activeCel.image = backup_img
+                image = backup_img
                 app.refresh()
                 app.alert("Restting image")
             else
@@ -67,29 +69,42 @@ shifter["show"] = function(x,y)
             id="rowRange",
             selected=true,
             label="Type",
-            text="Range"
+            text="Range",
+            onclick=function()
+                util.toggle_UI_Elements(dlg.data.rowFixed, { "rowAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
+            end
         }
         
         :radio{
             id="rowFixed",
-            text="Fixed"
+            text="Fixed",
+            onclick=function()
+                util.toggle_UI_Elements(dlg.data.rowFixed, { "rowAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
+            end
         }
             
         :slider{
             id="upperRowAmount",
             label="Max",
             min=0,
-            max=app.activeCel.image.height,
-            value=70}
+            max=image.height,
+            value=image.height * 0.7}
            
 
         :slider{
             id="lowerRowAmount",
             label="Min",
             min=0,
-            max=app.activeCel.image.height,
-            value=30}
-           
+            max=image.height,
+            value=image.height * 0.3}
+            
+        :number{
+            visible=false,
+            id="rowAmount",
+            decimals=integer
+        }   
             
         :separator{
             text="Shift amount"
@@ -99,42 +114,54 @@ shifter["show"] = function(x,y)
             id="shiftRange",
             selected=true,
             label="Type",
-            text="Range"
+            text="Range",
+            onclick=function()
+                util.toggle_UI_Elements(dlg.data.shiftFixed, { "shiftAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
+            end
         }
 
         :radio{
             id="shiftFixed",
-            text="Fixed"
+            text="Fixed",
+            onclick=function()
+                util.toggle_UI_Elements(dlg.data.shiftFixed, { "shiftAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
+            end
         }
             
         -- bug: this does not work as expected, because the image of the cell may be smaller than the canvas 
         :slider{
             id="upperShiftAmount",
             label="Max",
-            min=-app.activeCel.image.width,
-            max=app.activeCel.image.width,
-            value=5}
+            min=-image.width,
+            max=image.width,
+            value=image.width * 0.2}
 
         :slider{
             id="lowerShiftAmount",
             label="Min",
-            min=-app.activeCel.image.width,
-            max=app.activeCel.image.width,
-            value=-5}
+            min=-image.width,
+            max=image.width,
+            value=image.width * -0.2}
             
-        :number{
-            id="shift_amount",
+            
+        :number{ -- todo: indicate that this can also be negative
+            visible=false,
+            id="shiftAmount",
             decimals=integer
         }
 
         :button{
             id="preview",
-            label="Preview",
+            text="Preview",
             onclick=function()
                 -- todo: reset before previewing
                 if dlg.data.rowRange then
-                    shifter.shift_rows(dlg.data.lowerRowAmount, dlg.data.upperRowAmount, dlg.data.lowerShiftAmount, dlg.data.upperShiftAmount)
+                    shifter.shift_rows(dlg.data.lowerRowAmount, dlg.data.upperRowAmount, 
+                            dlg.data.lowerShiftAmount, dlg.data.upperShiftAmount)
                 else
+                    -- todo: use user value
                     shifter.shift_row(5,5)
                 end
             end}
