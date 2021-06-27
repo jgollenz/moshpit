@@ -17,6 +17,8 @@ local should_apply = false
 
 local backupImg = cel.image:clone()
 
+local subDialogs = {}
+
 function filter_row(row, constraint, lower, upper)
     local filtered_row = {}
 
@@ -215,8 +217,13 @@ dlg
         id="shift",
         text="Shift",
         onclick=function()
-            local bounds = dlg.bounds
-            shifter.show(bounds.x, bounds.y+bounds.height)
+            if subDialogs.shifterDlg == nil then
+                local bounds = dlg.bounds
+                subDialogs.shifterDlg = shifter.show(bounds.x, bounds.y+bounds.height)
+            else
+                subDialogs.shifterDlg:close()
+                subDialogs.shifterDlg = nil
+            end
         end
 }
 

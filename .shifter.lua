@@ -170,6 +170,8 @@ shifter["show"] = function(x,y)
             wait=false,
             bounds=Rectangle(x,y,width,height); 
         }
+    
+    return dlg
 end
 
 return shifter
