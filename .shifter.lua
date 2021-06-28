@@ -21,22 +21,23 @@ end
 
 shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount, img)
 
-    local image = app.activeCel.image:clone()
-    local rowNumbers = math.random(lowerRowAmount, upperRowAmount)
+    local shiftedImage = app.activeCel.image:clone()
+    local rowAmount = math.random(lowerRowAmount, upperRowAmount)
 
-    for i=0, rowNumbers, 1 do
+    for i=1, rowAmount, 1 do
         -- bug: can lead to shifting of same line multiple times
         -- fix: make this optional, because it leads to cool effects actually
-        local rowNumber = math.random(0, image.height) 
-        row = util.get_row(rowNumber, image)
-        for i, pixel in pairs(row) do
-            pixel = row[i]
-            shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
-            image:drawPixel(i+shift_amount, rowNumber, pixel)
+        local rowNumber = math.random(0, shiftedImage.height-1)
+        row = util.get_row(rowNumber, shiftedImage)
+        shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
+        for j, pixel in pairs(row) do
+            pixel = row[j]
+           --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) -- this is the culprit, it should not be a different amount for each pixel but for each row
+            shiftedImage:drawPixel((j-1)+shift_amount, rowNumber, pixel)
         end
     end
     
-    app.activeCel.image = image
+    app.activeCel.image = shiftedImage
     app.refresh()
     
 end
