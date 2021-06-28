@@ -2,7 +2,7 @@ hsl = {}
 
 -- todo: make this more generic
 
-hsl["hue_from_rgb"] = function (r, g, b)
+hsl.hue_from_rgb = function (r, g, b)
 
     min = math.min(r,g,b)
     max = math.max(r,g,b)
@@ -30,7 +30,7 @@ hsl["hue_from_rgb"] = function (r, g, b)
     return hue
 end
 
-hsl["lightness_from_rgb"] = function (r, g, b)
+hsl.lightness_from_rgb = function (r, g, b)
 
     R = r / 255
     G = g / 255

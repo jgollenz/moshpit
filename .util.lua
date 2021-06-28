@@ -1,24 +1,24 @@
 util = {}
 
-util["debug"] = false
+util.debug = false
 
-util["dprint"] = function (string)
+util.dprint = function (string)
     if util.debug then print(string) end
 end
 
-util["count"] = function (table)
+util.count = function (table)
     local amount = 0
     for _ in pairs(table) do amount = amount + 1 end
     return amount
 end
 
 -- exclusive
-util["in_range"] = function (value, lower, upper)
+util.in_range = function (value, lower, upper)
     --dprint(tostring(value)) 
     return (value > lower and value < upper)
 end
 
-util["toggle_UI_Elements"] = function (toggleState, elements, dialog)
+util.toggle_UI_Elements = function (toggleState, elements, dialog)
     for _,element in pairs(elements) do
         dialog:modify {
             id = element,
@@ -28,7 +28,7 @@ util["toggle_UI_Elements"] = function (toggleState, elements, dialog)
     end
 end
 
-util["get_row"] = function (rowNumber, img)
+util.get_row = function (rowNumber, img)
     local row = {}
 
     for i=0, img.width-1, 1 do

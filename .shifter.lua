@@ -7,8 +7,7 @@ local height = 200
 shifter = {}
 
 -- todo: add random pixel shift
-
-shifter["shift_row"] = function (rowNumber, shiftAmount, img)
+shifter.shift_row = function (rowNumber, shiftAmount, img)
     local image = app.activeCel.image:clone() -- todo: hand over
     row = util.get_row(rowNumber, image)
 
@@ -20,7 +19,7 @@ shifter["shift_row"] = function (rowNumber, shiftAmount, img)
     app.refresh()
 end
 
-shifter["shift_rows"] = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount, img)
+shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount, img)
 
     local image = app.activeCel.image:clone()
     local rowNumbers = math.random(lowerRowAmount, upperRowAmount)
@@ -42,7 +41,7 @@ shifter["shift_rows"] = function (lowerRowAmount, upperRowAmount, lowerShiftAmou
     
 end
 
-shifter["show"] = function(x,y)
+shifter.show = function(x,y)
 
     local image = app.activeCel.image
     local backup_img = image:clone()
