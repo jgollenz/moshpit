@@ -1,7 +1,7 @@
 local util = dofile("./.util.lua")
 
 -- bounds
-local width = 200
+local width = 120
 local height = 200
 
 shifter = {}
@@ -52,9 +52,10 @@ shifter.show = function(x,y)
         title="Shift Rows",
         onclose=function()
             if (should_apply == false) then
-                image = backup_img
+                -- reset
+                app.activeCel.image = backup_img
                 app.refresh()
-                app.alert("Restting image")
+                --app.alert("Restting image")
             else
                 should_apply = false
             end
@@ -92,7 +93,6 @@ shifter.show = function(x,y)
             max=image.height,
             value=image.height * 0.7}
            
-
         :slider{
             id="lowerRowAmount",
             label="Min",
@@ -164,6 +164,23 @@ shifter.show = function(x,y)
                     -- todo: use user value
                     shifter.shift_row(5,5)
                 end
+            end}
+            
+        :newrow()
+            
+        :button{
+            id="reset",
+            text="Reset",
+            onclick=function()
+                app.activeCel.image = backup_img
+                app.refresh()
+            end}
+
+        :button{
+            id="apply",
+            text="Apply",
+            onclick=function()
+                backup_img = app.activeCel.image:clone()
             end}
 
         :show{
