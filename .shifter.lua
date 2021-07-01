@@ -1,5 +1,7 @@
 local util = dofile("./.util.lua")
 
+local dlg = -1
+
 -- bounds
 local width = 120
 local height = 200
@@ -7,18 +9,6 @@ local height = 200
 shifter = {}
 
 -- todo: add random pixel shift
-shifter.shift_row = function (rowNumber, shiftAmount, img)
-    local image = app.activeCel.image:clone() -- todo: hand over
-    row = util.get_row(rowNumber, image)
-
-    for i, pixel in pairs(row) do
-        pixel = row[i]
-        image:drawPixel(i+shiftAmount, rowNumber, pixel)
-    end
-    app.activeCel.image = image
-    app.refresh()
-end
-
 shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount, img)
 
     local shiftedImage = app.activeCel.image:clone()
@@ -26,11 +16,10 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
     
     rowsToShift = {}
 
+    -- get rows that will be shifted
     for i=1, rowAmount, 1 do
-
         repeat
             nextRow = math.random(0, shiftedImage.height-1)
-            
         until util.contains(rowsToShift, nextRow) == false
         
         table.insert (rowsToShift, nextRow)        
@@ -41,11 +30,11 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
         -- fix: make this optional, because it leads to cool effects actually
         
         rowNumber = rowsToShift[i]
-        
         row = util.get_row(rowNumber, shiftedImage)
         shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
-        for j, pixel in pairs(row) do
-            pixel = row[j]
+        
+        for x, pixel in pairs(row) do
+            pixel = row[x]
            --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) -- this is the culprit, it should not be a different amount for each pixel but for each row
             shiftedImage:drawPixel((j-1)+shift_amount, rowNumber, pixel)
         end
@@ -53,7 +42,6 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
     
     app.activeCel.image = shiftedImage
     app.refresh()
-    
 end
 
 shifter.show = function(x,y)
@@ -62,7 +50,7 @@ shifter.show = function(x,y)
     local backup_img = image:clone()
     
 
-    local dlg = Dialog{
+    local newDialog = Dialog{
         title="Shift Rows",
         onclose=function()
             if (should_apply == false) then
@@ -75,6 +63,8 @@ shifter.show = function(x,y)
             end
         end
     }
+    
+    dlg = newDialog
 
     dlg
         :separator{
@@ -86,7 +76,7 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.rowFixed, { "rowAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.rowFixed, { "fixedRowAmount" }, dlg)
                 util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
             end
         }
@@ -95,7 +85,7 @@ shifter.show = function(x,y)
             id="rowFixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.rowFixed, { "rowAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.rowFixed, { "fixedRowAmount" }, dlg)
                 util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
             end
         }
@@ -116,7 +106,7 @@ shifter.show = function(x,y)
             
         :number{
             visible=false,
-            id="rowAmount",
+            id="fixedRowAmount",
             decimals=integer
         }   
             
@@ -130,7 +120,7 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.shiftFixed, { "shiftAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.shiftFixed, { "fixedShiftAmount" }, dlg)
                 util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
             end
         }
@@ -139,7 +129,7 @@ shifter.show = function(x,y)
             id="shiftFixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.shiftFixed, { "shiftAmount" }, dlg)
+                util.toggle_UI_Elements(dlg.data.shiftFixed, { "fixedShiftAmount" }, dlg)
                 util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
             end
         }
@@ -161,7 +151,7 @@ shifter.show = function(x,y)
             
         :number{ -- todo: indicate that this can also be negative
             visible=false,
-            id="shiftAmount",
+            id="fixedShiftAmount",
             decimals=integer
         }
 
@@ -169,14 +159,28 @@ shifter.show = function(x,y)
             id="preview",
             text="Preview",
             onclick=function()
-                -- todo: reset before previewing
+                local minRows, maxRows
+                local minShift, maxShift
+                
                 if dlg.data.rowRange then
-                    shifter.shift_rows(dlg.data.lowerRowAmount, dlg.data.upperRowAmount, 
-                            dlg.data.lowerShiftAmount, dlg.data.upperShiftAmount)
+                    minRows = dlg.data.lowerRowAmount
+                    maxRows = dlg.data.upperRowAmount
                 else
-                    -- todo: use user value
-                    shifter.shift_row(5,5)
+                    minRows = dlg.data.fixedRowAmount
+                    maxRows = dlg.data.fixedRowAmount
                 end
+
+                if dlg.data.shiftRange then
+                    minShift = dlg.data.lowerShiftAmount                    
+                    maxShift = dlg.data.upperShiftAmount                    
+                else
+                    minShift = dlg.data.fixedShiftAmount
+                    maxShift = dlg.data.fixedShiftAmount
+                end
+                --print(string.format("rowRange: %s, shiftRange: %s", dlg.data.rowRange, dlg.data.shiftRange))
+                --print(string.format("minRows: %d, maxRows: %d, minShift: %d, maxShift: %d", minRows, maxRows, minShift, maxShift))
+                
+                shifter.shift_rows(minRows, maxRows, minShift, maxShift)
             end}
             
         :newrow()
