@@ -38,4 +38,14 @@ util.get_row = function (rowNumber, img)
     return row
 end
 
+util.contains = function (table, value)
+    for _, element in pairs(table) do
+        if element == value then
+            return true
+        end
+    end
+    
+    return false
+end
+
 return util

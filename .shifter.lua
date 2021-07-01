@@ -23,11 +23,25 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
 
     local shiftedImage = app.activeCel.image:clone()
     local rowAmount = math.random(lowerRowAmount, upperRowAmount)
+    
+    rowsToShift = {}
 
     for i=1, rowAmount, 1 do
-        -- bug: can lead to shifting of same line multiple times
+
+        repeat
+            nextRow = math.random(0, shiftedImage.height-1)
+            
+        until util.contains(rowsToShift, nextRow) == false
+        
+        table.insert (rowsToShift, nextRow)        
+    end
+
+    local rowNumber = -1
+    for i=1, rowAmount, 1 do
         -- fix: make this optional, because it leads to cool effects actually
-        local rowNumber = math.random(0, shiftedImage.height-1)
+        
+        rowNumber = rowsToShift[i]
+        
         row = util.get_row(rowNumber, shiftedImage)
         shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
         for j, pixel in pairs(row) do
@@ -144,7 +158,6 @@ shifter.show = function(x,y)
             min=-image.width,
             max=image.width,
             value=image.width * -0.2}
-            
             
         :number{ -- todo: indicate that this can also be negative
             visible=false,
