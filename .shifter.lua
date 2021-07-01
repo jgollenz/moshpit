@@ -36,7 +36,7 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
         for x, pixel in pairs(row) do
             pixel = row[x]
            --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) -- this is the culprit, it should not be a different amount for each pixel but for each row
-            shiftedImage:drawPixel((j-1)+shift_amount, rowNumber, pixel)
+            shiftedImage:drawPixel((x-1)+shift_amount, rowNumber, pixel)
         end
     end
     
