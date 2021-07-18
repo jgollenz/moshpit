@@ -1,6 +1,4 @@
-local util = dofile("./.util.lua")
-
-local dlg = -1
+local dialog = -1
 
 -- bounds
 local width = 120
@@ -48,9 +46,7 @@ shifter.show = function(x,y)
 
     local image = app.activeCel.image
     local backup_img = image:clone()
-    
-
-    local newDialog = Dialog{
+    local new_dialog = Dialog{
         title="Shift Rows",
         onclose=function()
             if (should_apply == false) then
@@ -61,12 +57,15 @@ shifter.show = function(x,y)
             else
                 should_apply = false
             end
+
+            sub_dialogs.shifter_dialog = nil
         end
     }
     
-    dlg = newDialog
+    dialog = new_dialog
 
-    dlg
+    -- todo: snake-case
+    dialog
         :separator{
         text="Row amount"}
 
@@ -76,8 +75,8 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.rowFixed, { "fixedRowAmount" }, dlg)
-                util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
+                util.toggle_UI_Elements(dialog.data.rowFixed, { "fixedRowAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dialog)
             end
         }
         
@@ -85,8 +84,8 @@ shifter.show = function(x,y)
             id="rowFixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.rowFixed, { "fixedRowAmount" }, dlg)
-                util.toggle_UI_Elements(dlg.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dlg)
+                util.toggle_UI_Elements(dialog.data.rowFixed, { "fixedRowAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dialog)
             end
         }
             
@@ -94,8 +93,8 @@ shifter.show = function(x,y)
             id="upperRowAmount",
             label="Max",
             min=0,
-            max=image.height,
-            value=image.height * 0.7}
+            max=image.height, -- bug
+            value=image.height * 0.7} 
            
         :slider{
             id="lowerRowAmount",
@@ -120,8 +119,8 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.shiftFixed, { "fixedShiftAmount" }, dlg)
-                util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
+                util.toggle_UI_Elements(dialog.data.shiftFixed, { "fixedShiftAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dialog)
             end
         }
 
@@ -129,8 +128,8 @@ shifter.show = function(x,y)
             id="shiftFixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dlg.data.shiftFixed, { "fixedShiftAmount" }, dlg)
-                util.toggle_UI_Elements(dlg.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dlg)
+                util.toggle_UI_Elements(dialog.data.shiftFixed, { "fixedShiftAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dialog)
             end
         }
             
@@ -162,20 +161,20 @@ shifter.show = function(x,y)
                 local minRows, maxRows
                 local minShift, maxShift
                 
-                if dlg.data.rowRange then
-                    minRows = dlg.data.lowerRowAmount
-                    maxRows = dlg.data.upperRowAmount
+                if dialog.data.rowRange then
+                    minRows = dialog.data.lowerRowAmount
+                    maxRows = dialog.data.upperRowAmount
                 else
-                    minRows = dlg.data.fixedRowAmount
-                    maxRows = dlg.data.fixedRowAmount
+                    minRows = dialog.data.fixedRowAmount
+                    maxRows = dialog.data.fixedRowAmount
                 end
 
-                if dlg.data.shiftRange then
-                    minShift = dlg.data.lowerShiftAmount                    
-                    maxShift = dlg.data.upperShiftAmount                    
+                if dialog.data.shiftRange then
+                    minShift = dialog.data.lowerShiftAmount                    
+                    maxShift = dialog.data.upperShiftAmount                    
                 else
-                    minShift = dlg.data.fixedShiftAmount
-                    maxShift = dlg.data.fixedShiftAmount
+                    minShift = dialog.data.fixedShiftAmount
+                    maxShift = dialog.data.fixedShiftAmount
                 end
                 --print(string.format("rowRange: %s, shiftRange: %s", dlg.data.rowRange, dlg.data.shiftRange))
                 --print(string.format("minRows: %d, maxRows: %d, minShift: %d, maxShift: %d", minRows, maxRows, minShift, maxShift))
@@ -205,7 +204,7 @@ shifter.show = function(x,y)
             bounds=Rectangle(x,y,width,height); 
         }
     
-    return dlg
+    return dialog
 end
 
 return shifter

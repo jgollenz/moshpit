@@ -8,141 +8,13 @@ if not cel then
 end
 
 -- starting position / dimensions
-local xAnchor = 75
+local xAnchor = 100
 local yAnchor = 50
-local dialogWidth = 120
-local dialogHeight = 100
+local dialog_width = 160
+local dialog_height = 80
 
 local should_apply = false
-
-local backupImg = cel.image:clone()
-
-local subDialogs = {}
-
-function filter_row(row, constraint, lower, upper)
-    local filtered_row = {}
-
-    for i, pixel in pairs(row) do
-        local red = app.pixelColor.rgbaR(pixel)
-        local green = app.pixelColor.rgbaG(pixel)
-        local blue = app.pixelColor.rgbaB(pixel)
-        if util.in_range(constraint(red, green, blue), lower, upper) then
-            filtered_row[i] = pixel
-            --table.insert(filtered_row, {i = pixel})
-            --util.dprint("yes")
-        else
-            --util.dprint("no")
-        end
-    end
-
-    --[[
-    for k, v in pairs(filtered_row) do 
-        print(k)
-        print(v)
-    end
-    ]]--
-    return filtered_row 
-end
-
-function sort_row(row, attribute)
-
-    local keys = {}        
-    local positions = {}
-    local key_values = {}
-    for i, pixel in pairs(row) do
-        util.dprint(i)
-        util.dprint(tostring(pixel))
-        local red = app.pixelColor.rgbaR(pixel)
-        local green = app.pixelColor.rgbaG(pixel)
-        local blue = app.pixelColor.rgbaB(pixel)
-        local alpha = app.pixelColor.rgbaA(pixel)
-        local key = attribute(red, green, blue)
-        if key ~= key then 
-            print("ERROR: key was NaN")
-            key = 0 
-        end
-        keys[#keys+1] = key
-        positions[#positions+1] = i
-        key_values[key] = pixel
-    end
-
-    table.sort(keys)
-    table.sort(positions)
-
-    local i = 0
-    return function()
-        i = i + 1 
-        if keys[i] then
-            return i, keys[i], positions[i], key_values[keys[i]]
-        end
-    end
-end
-
-function pixel_sort(lower, upper)
-
-    if lower >= upper then
-        app.alert("lower threshold must be lower than upper threshold")
-        return
-    end
-
-    math.randomseed(os.time())
-
-    local img = cel.image:clone()
-    local row_count = img.height
-    local row_width = img.width
-
-
-    if img.colorMode == ColorMode.RGB then
-        local rgba = app.pixelColor.rgba
-        for rowNumber=0, row_count, 1 do
-            row = util.get_row(rowNumber, img)
-            row = filter_row(row, hsl.lightness_from_rgb, lower, upper)
-            for i, hue, position, pixel in sort_row(row, hsl.hue_from_rgb) do
-                local red = app.pixelColor.rgbaR(pixel)
-                local green = app.pixelColor.rgbaG(pixel)
-                local blue = app.pixelColor.rgbaB(pixel)
-                local alpha = app.pixelColor.rgbaA(pixel)
-                img:drawPixel(position-1,rowNumber, rgba(red, green, blue, alpha))
-            end
-        end
-    else
-        print(string.format("No support for %s yet", tostring(img.colorMode)))
-    end
-
-
-    cel.image = img
-
-    app.refresh()
-
-end
-
-function cutoff(lower, upper)
-
-    local img = cel.image:clone()
-
-    -- 1. go through all pixels
-    for pixel in backupImg:pixels() do
-        local rgba = app.pixelColor.rgba
-        local actualPixel = pixel()
-
-        -- 2. get pixel lightness
-        local red = app.pixelColor.rgbaR(pixel())
-        local green = app.pixelColor.rgbaG(pixel())
-        local blue = app.pixelColor.rgbaB(pixel())
-        local lightness = hsl.lightness_from_rgb(red, green, blue)
-        local alpha = app.pixelColor.rgbaA(pixel())
-        if lightness > upper or lightness < lower then
-            -- 3. make pixel black
-            img:drawPixel(pixel.x, pixel.y, rgba(0, 0, 0, alpha))
-        else 
-            -- 4. make pixel white
-            img:drawPixel(pixel.x, pixel.y, rgba(255, 255, 255, alpha))
-        end
-    end
-
-    cel.image = img
-    app.refresh()
-end
+sub_dialogs = {}
 
 --local threshholdPreview = Sprite(app.activeSprite)
 
@@ -150,21 +22,21 @@ local dlg = Dialog{
     title="Moshpit", 
     onclose=function()
         if (should_apply == false) then
-            cel.image = backupImg
+            --cel.image = backupImg
             app.refresh()
-            app.alert("Resetting image")
+            --app.alert("Resetting image")
         else
             should_apply = false
         end
         
-        for _,subDialog in pairs(subDialogs) do
-            subDialog:close()
+        for _, sub_dialog in pairs(sub_dialogs) do
+            sub_dialog:close()
         end
     end}
 
 dlg
     
-    :check{
+--[[    :check{
         id="debug",
         label="debug",
         selected=false,
@@ -196,44 +68,48 @@ dlg
         id="test",
         label="test",
         visible=false
-    }
+    }]]
 
     :button{ 
         id="sort", 
-        text="sort", 
+        text="Pixel Sort", 
         onclick=function()
-            --cel.image = backupImg
-            pixel_sort(dlg.data.lower, dlg.data.upper)
-            --dlg:close()
+            if sub_dialogs.sorter_dialog == nil then
+                local bounds = dlg.bounds
+                sub_dialogs.sorter_dialog = sorter.show(bounds.x, bounds.y+bounds.height)
+            else
+                sub_dialogs.sorter_dialog:close()
+                --sub_dialogs.sorter_dialog = nil
+            end
         end}
         
-    :button{
+--[[    :button{
         id="apply",
         text="Apply",
         onclick=function()
             should_apply = true
             dlg:close()
-        end}
+        end}]]
      
     :newrow()
-        
+    
+    -- todo: 1. not dry 2. stays open when other dialog is opened. should prob. close
     :button{
         id="shift",
-        text="Shift",
+        text="Pixel Shift",
         onclick=function()
-            if subDialogs.shifterDlg == nil then
+            if sub_dialogs.shifter_dialog == nil then
                 local bounds = dlg.bounds
-                subDialogs.shifterDlg = shifter.show(bounds.x, bounds.y+bounds.height)
+                sub_dialogs.shifter_dialog = shifter.show(bounds.x, bounds.y+bounds.height)
             else
-                subDialogs.shifterDlg:close()
-                subDialogs.shifterDlg = nil
+                sub_dialogs.shifter_dialog:close()                
             end
         end
 }
 
     :show {
         wait=false,
-        bounds=Rectangle(xAnchor,yAnchor,dialogWidth,dialogHeight); 
+        bounds=Rectangle(xAnchor,yAnchor, dialog_width, dialog_height); 
     }   
 
 --cutoff(dlg.data.lower, dlg.data.upper)
