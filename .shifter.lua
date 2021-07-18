@@ -64,40 +64,39 @@ shifter.show = function(x,y)
     
     dialog = new_dialog
 
-    -- todo: snake-case
     dialog
         :separator{
         text="Row amount"}
 
         :radio{
-            id="rowRange",
+            id="row_range",
             selected=true,
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.rowFixed, { "fixedRowAmount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
             end
         }
         
         :radio{
-            id="rowFixed",
+            id="row_fixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.rowFixed, { "fixedRowAmount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.rowRange, { "upperRowAmount", "lowerRowAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
             end
         }
             
         :slider{
-            id="upperRowAmount",
+            id="upper_row_amount",
             label="Max",
             min=0,
             max=image.height, -- bug
             value=image.height * 0.7} 
            
         :slider{
-            id="lowerRowAmount",
+            id="lower_row_amount",
             label="Min",
             min=0,
             max=image.height,
@@ -105,7 +104,7 @@ shifter.show = function(x,y)
             
         :number{
             visible=false,
-            id="fixedRowAmount",
+            id="fixed_row_amount",
             decimals=integer
         }   
             
@@ -114,43 +113,43 @@ shifter.show = function(x,y)
         }
 
         :radio{
-            id="shiftRange",
+            id="shift_range",
             selected=true,
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.shiftFixed, { "fixedShiftAmount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
             end
         }
 
         :radio{
-            id="shiftFixed",
+            id="shift_fixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.shiftFixed, { "fixedShiftAmount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.shiftRange, { "upperShiftAmount", "lowerShiftAmount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
+                util.toggle_UI_Elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
             end
         }
             
         -- bug: this does not work as expected, because the image of the cell may be smaller than the canvas 
         :slider{
-            id="upperShiftAmount",
+            id="upper_shift_amount",
             label="Max",
             min=-image.width,
             max=image.width,
-            value=image.width * 0.2}
+            value=5}
 
         :slider{
-            id="lowerShiftAmount",
+            id="lower_shift_amount",
             label="Min",
             min=-image.width,
             max=image.width,
-            value=image.width * -0.2}
+            value=-5}
             
         :number{ -- todo: indicate that this can also be negative
             visible=false,
-            id="fixedShiftAmount",
+            id="fixed_shift_amount",
             decimals=integer
         }
 
@@ -158,28 +157,28 @@ shifter.show = function(x,y)
             id="preview",
             text="Preview",
             onclick=function()
-                local minRows, maxRows
-                local minShift, maxShift
+                local min_rows, max_rows
+                local min_shift, max_shift
                 
-                if dialog.data.rowRange then
-                    minRows = dialog.data.lowerRowAmount
-                    maxRows = dialog.data.upperRowAmount
+                if dialog.data.row_range then
+                    min_rows = dialog.data.lower_row_amount
+                    max_rows = dialog.data.upper_row_amount
                 else
-                    minRows = dialog.data.fixedRowAmount
-                    maxRows = dialog.data.fixedRowAmount
+                    min_rows = dialog.data.fixed_row_amount
+                    max_rows = dialog.data.fixed_row_amount
                 end
 
                 if dialog.data.shiftRange then
-                    minShift = dialog.data.lowerShiftAmount                    
-                    maxShift = dialog.data.upperShiftAmount                    
-                else
-                    minShift = dialog.data.fixedShiftAmount
-                    maxShift = dialog.data.fixedShiftAmount
+                    min_shift = dialog.data.lower_shift_amount                    
+                    max_shift = dialog.data.upper_shift_amount                    
+                else                             
+                    min_shift = dialog.data.fixed_shift_amount
+                    max_shift = dialog.data.fixed_shift_amount
                 end
                 --print(string.format("rowRange: %s, shiftRange: %s", dlg.data.rowRange, dlg.data.shiftRange))
                 --print(string.format("minRows: %d, maxRows: %d, minShift: %d, maxShift: %d", minRows, maxRows, minShift, maxShift))
                 
-                shifter.shift_rows(minRows, maxRows, minShift, maxShift)
+                shifter.shift_rows(min_rows, max_rows, min_shift, max_shift)
             end}
             
         :newrow()
