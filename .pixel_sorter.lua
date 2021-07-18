@@ -14,10 +14,7 @@ sorter.sort_row = function(row, attribute)
     for i, pixel in pairs(row) do
         util.dprint(i)
         util.dprint(tostring(pixel))
-        local red = app.pixelColor.rgbaR(pixel)
-        local green = app.pixelColor.rgbaG(pixel)
-        local blue = app.pixelColor.rgbaB(pixel)
-        local key = attribute(red, green, blue)
+        local key = attribute(pixel)
         if key ~= key then
             print("ERROR: key was NaN")
             key = 0
@@ -67,28 +64,31 @@ sorter.pixel_sort = function (lower,upper)
     math.randomseed(os.time())
 
     local img = app.activeCel.image:clone()
-    local row_count = img.height
+    local row_count = img.height - 1
 
     local color_mode
     if img.colorMode == ColorMode.RGB then
         color_mode = app.pixelColor.rgba
     elseif img.colorMode == ColorMode.GRAY then
-        color_mode = app.pixelColor.graya        
-    else
-        print(string.format("No support for %s yet", tostring(img.colorMode)))
-        return
+        color_mode = app.pixelColor.graya
     end
 
     for row_number = 0, row_count, 1 do
         row = util.get_row(row_number, img)
-        row = sorter.filter_row(row, hsl.lightness_from_rgb, lower, upper)
+        --row = sorter.filter_row(row, hsl.lightness_from_rgb, lower, upper)
         -- todo: get this hue outta here
-        for i, hue, position, pixel in sorter.sort_row(row, hsl.hue_from_rgb) do
-            local red = app.pixelColor.rgbaR(pixel)
-            local green = app.pixelColor.rgbaG(pixel)
-            local blue = app.pixelColor.rgbaB(pixel)
-            local alpha = app.pixelColor.rgbaA(pixel)
-            img:drawPixel(position-1, row_number, color_mode(red, green, blue, alpha))
+        for i, hue, position, pixel in sorter.sort_row(row, hsl.hue_from_pixel) do
+
+            if (img.colorMode == ColorMode.INDEXED) then
+                img:drawPixel(position-1, row_number, pixel)
+            else
+                local red = app.pixelColor.rgbaR(pixel)
+                local green = app.pixelColor.rgbaG(pixel)
+                local blue = app.pixelColor.rgbaB(pixel)
+                local alpha = app.pixelColor.rgbaA(pixel)
+                -- todo: this should work with just handing over pixel. but it doesn't
+                img:drawPixel(position-1, row_number, color_mode(red, green, blue, alpha))    
+            end
         end
     end
 

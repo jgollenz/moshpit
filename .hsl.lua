@@ -1,6 +1,27 @@
 hsl = {}
 
--- todo: make this more generic
+hsl.hue_from_pixel = function(pixel)
+    
+    local color = 0
+
+    if app.activeCel.image.colorMode == ColorMode.GRAY then
+        app.alert("Hue cannot be calculated from grayscale image")
+        return color
+    end
+
+    if app.activeCel.image.colorMode == ColorMode.INDEXED then
+        local palette = app.activeSprite.palettes[1]        
+        color = palette:getColor(pixel)
+        
+        return color.hue;
+    end
+    
+    if app.activeCel.image.colorMode == ColorMode.RGB then
+        color = Color(pixel)
+        
+        return color.hue      
+    end
+end
 
 hsl.hue_from_rgb = function (r, g, b)
 
