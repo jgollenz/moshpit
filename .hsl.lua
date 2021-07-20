@@ -1,26 +1,23 @@
 hsl = {}
 
-hsl.hue_from_pixel = function(pixel)
-    
+hsl.hue_from_pixel = function (pixel)
     local color = 0
+    local color_mode = app.activeCel.image.colorMode
 
-    if app.activeCel.image.colorMode == ColorMode.GRAY then
-        app.alert("Hue cannot be calculated from grayscale image")
+    if color_mode == ColorMode.INDEXED then
+        local palette = app.activeSprite.palettes[1]
+        color = palette:getColor(pixel)
+
+    elseif color_mode == ColorMode.RGB then
+        color = Color(pixel)
+
+    else
+        -- todo: alert the user about this, but not here
+        --app.alert("Hue cannot be calculated from grayscale image")
         return color
     end
 
-    if app.activeCel.image.colorMode == ColorMode.INDEXED then
-        local palette = app.activeSprite.palettes[1]        
-        color = palette:getColor(pixel)
-        
-        return color.hue;
-    end
-    
-    if app.activeCel.image.colorMode == ColorMode.RGB then
-        color = Color(pixel)
-        
-        return color.hue      
-    end
+    return color.hue
 end
 
 hsl.hue_from_rgb = function (r, g, b)
@@ -49,6 +46,26 @@ hsl.hue_from_rgb = function (r, g, b)
     end
 
     return hue
+end
+
+hsl.lightness_from_pixel = function (pixel)
+    local color = 0
+    local color_mode = app.activeCel.image.colorMode
+
+    if color_mode == ColorMode.INDEXED then
+        local palette = app.activeSprite.palettes[1]
+        color = palette:getColor(pixel)
+
+    elseif color_mode == ColorMode.RGB  or color_mode == ColorMode.GRAY then
+        color = Color(pixel)
+
+    else
+        app.alert("Unknown color mode")
+        return color
+    end
+    
+    --print(color.lightness)
+    return color.lightness * 100
 end
 
 hsl.lightness_from_rgb = function (r, g, b)
