@@ -50,10 +50,8 @@ shifter.show = function(x,y)
         title="Shift Rows",
         onclose=function()
             if (should_apply == false) then
-                -- reset
                 app.activeCel.image = backup_img
                 app.refresh()
-                --app.alert("Restting image")
             else
                 should_apply = false
             end
@@ -168,15 +166,13 @@ shifter.show = function(x,y)
                     max_rows = dialog.data.fixed_row_amount
                 end
 
-                if dialog.data.shiftRange then
+                if dialog.data.shift_range then
                     min_shift = dialog.data.lower_shift_amount                    
                     max_shift = dialog.data.upper_shift_amount                    
                 else                             
                     min_shift = dialog.data.fixed_shift_amount
                     max_shift = dialog.data.fixed_shift_amount
                 end
-                --print(string.format("rowRange: %s, shiftRange: %s", dlg.data.rowRange, dlg.data.shiftRange))
-                --print(string.format("minRows: %d, maxRows: %d, minShift: %d, maxShift: %d", minRows, maxRows, minShift, maxShift))
                 
                 shifter.shift_rows(min_rows, max_rows, min_shift, max_shift)
             end}
