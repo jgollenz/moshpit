@@ -7,8 +7,8 @@ local height = 200
 shifter = {}
 
 -- todo: add random pixel shift
-shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount, img)
-
+shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount)
+    
     local shiftedImage = app.activeCel.image:clone()
     local rowAmount = math.random(lowerRowAmount, upperRowAmount)
     
