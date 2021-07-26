@@ -2,10 +2,21 @@
 
 -- bounds
 local width = 120
-local height = 200
+local height = 150
 local cutoff_sprite
+local cutoff_sprite_opened = false
 
 sorter = {}
+
+function open_cutoff_sprite()
+
+    -- create a new sprite to preview the cutoff
+    cutoff_sprite = Sprite(app.activeSprite.width, app.activeSprite.height)
+    cutoff_sprite_opened = true
+    app.command.FitScreen()
+    sorter.cutoff(dialog.data.lower, dialog.data.upper)
+    
+end
 
 sorter.sort_row = function(row, attribute)
 
@@ -41,10 +52,6 @@ sorter.filter_row = function(row, constraint, lower, upper)
     local filtered_row = {}
 
     for i, pixel in pairs(row) do
-        -- todo: not given that we have rgb. Just hand over the pixel itself
-        local red = app.pixelColor.rgbaR(pixel)
-        local green = app.pixelColor.rgbaG(pixel)
-        local blue = app.pixelColor.rgbaB(pixel)
         if util.in_range(constraint(pixel), lower, upper) then
             filtered_row[i] = pixel
         end
@@ -62,9 +69,11 @@ sorter.pixel_sort = function (lower,upper)
 
     math.randomseed(os.time())
     
-    -- close cutoff preview sprite
-    app.activeSprite:close()
-
+    if cutoff_sprite_opened then 
+        app.activeSprite:close()
+        cutoff_sprite_opened = false
+    end
+    
     local img = app.activeCel.image:clone()
     local row_count = img.height - 1
 
@@ -99,14 +108,18 @@ sorter.pixel_sort = function (lower,upper)
     
 end
 
-local backup_img = app.activeCel.image:clone()
+local sorter_backup_img = app.activeCel.image:clone()
 
 sorter.cutoff = function (lower, upper)
+
+    if not cutoff_sprite_opened then
+        open_cutoff_sprite()
+    end
 
     local img = app.activeCel.image:clone()
 
     -- 1. go through all pixels
-    for pixel in backup_img:pixels() do
+    for pixel in sorter_backup_img:pixels() do
         local rgba = app.pixelColor.rgba
         local actual_pixel = pixel()
 
@@ -150,11 +163,14 @@ sorter.show = function(x,y)
         end
     }
     
-    dialog 
+    dialog
+
+        :separator{
+            text="Treshold"}
             
         :slider{
             id="upper",
-            label="Upper threshold",
+            label="Max",
             min=0,
             max=100,
             value=70,
@@ -165,7 +181,7 @@ sorter.show = function(x,y)
         
         :slider{
             id="lower",
-            label="lower threshold",
+            label="Min",
             min=0,
             max=100,
             value=30,
@@ -175,10 +191,29 @@ sorter.show = function(x,y)
         }
             
         :button{
-            id="sort",
-            text="Sort",
+            id="preview",
+            text="Preview",
             onclick=function()  
                 sorter.pixel_sort(dialog.data.lower, dialog.data.upper)
+            end
+        }
+
+        :newrow()
+
+        :button{
+            id="reset",
+            text="Reset",
+            onclick=function()
+                app.activeCel.image = sorter_backup_img
+                app.refresh()
+            end
+        }
+
+        :button{
+            id="apply",
+            text="Apply",
+            onclick=function()
+                sorter_backup_img = app.activeCel.image:clone()
             end
         }
             
@@ -187,10 +222,7 @@ sorter.show = function(x,y)
             bounds=Rectangle(x,y,width,height);
         }
 
-    -- create a new sprite to preview the cutoff
-    cutoff_sprite = Sprite(app.activeSprite.width, app.activeSprite.height)
-    app.command.FitScreen()
-    sorter.cutoff(dialog.data.lower, dialog.data.upper)
+    open_cutoff_sprite()
     
     return dialog
 end
