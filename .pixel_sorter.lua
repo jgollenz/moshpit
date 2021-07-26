@@ -145,15 +145,14 @@ end
 sorter.show = function(x,y)  
     
     local image = app.activeCel.image
-    local backup_img = image:clone()
     
     -- todo: not DRY. Think about at get_sub_dialog() function
     dialog = Dialog{
         title="Sort Pixels",
         onclose=function()
             if (should_apply == false) then
-                -- reset
-                app.activeCel.image = backup_img
+                -- reset                
+                app.activeCel.image = sorter_backup_img
                 app.refresh()
             else
                 should_apply = false
