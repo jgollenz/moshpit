@@ -150,6 +150,10 @@ sorter.show = function(x,y)
     dialog = Dialog{
         title="Sort Pixels",
         onclose=function()
+            if cutoff_sprite_opened then
+                app.activeSprite:close()
+                cutoff_sprite_opened = false
+            end
             if (should_apply == false) then
                 -- reset                
                 app.activeCel.image = sorter_backup_img
