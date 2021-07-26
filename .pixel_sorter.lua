@@ -3,6 +3,7 @@
 -- bounds
 local width = 120
 local height = 200
+local cutoff_sprite
 
 sorter = {}
 
@@ -12,8 +13,6 @@ sorter.sort_row = function(row, attribute)
     local positions = {}
     local key_values = {}
     for i, pixel in pairs(row) do
-        util.dprint(i)
-        util.dprint(tostring(pixel))
         local key = attribute(pixel)
         if key ~= key then
             print("ERROR: key was NaN")
@@ -46,7 +45,7 @@ sorter.filter_row = function(row, constraint, lower, upper)
         local red = app.pixelColor.rgbaR(pixel)
         local green = app.pixelColor.rgbaG(pixel)
         local blue = app.pixelColor.rgbaB(pixel)
-        if util.in_range(constraint(red, green, blue), lower, upper) then
+        if util.in_range(constraint(pixel), lower, upper) then
             filtered_row[i] = pixel
         end
     end
@@ -62,6 +61,9 @@ sorter.pixel_sort = function (lower,upper)
     end
 
     math.randomseed(os.time())
+    
+    -- close cutoff preview sprite
+    app.activeSprite:close()
 
     local img = app.activeCel.image:clone()
     local row_count = img.height - 1
@@ -75,7 +77,7 @@ sorter.pixel_sort = function (lower,upper)
 
     for row_number = 0, row_count, 1 do
         row = util.get_row(row_number, img)
-        --row = sorter.filter_row(row, hsl.lightness_from_rgb, lower, upper)
+        row = sorter.filter_row(row, hsl.lightness_from_pixel, lower, upper)
         -- todo: get this hue outta here
         for i, hue, position, pixel in sorter.sort_row(row, hsl.hue_from_pixel) do
 
@@ -112,7 +114,7 @@ sorter.cutoff = function (lower, upper)
         local red = app.pixelColor.rgbaR(pixel())
         local green = app.pixelColor.rgbaG(pixel())
         local blue = app.pixelColor.rgbaB(pixel())
-        local lightness = hsl.lightness_from_rgb(red, green, blue)
+        local lightness = hsl.lightness_from_pixel(actual_pixel)
         local alpha = app.pixelColor.rgbaA(pixel())
         if lightness > upper or lightness < lower then
             -- 3. make pixel black
@@ -131,36 +133,25 @@ sorter.show = function(x,y)
     
     local image = app.activeCel.image
     local backup_img = image:clone()
-    -- todo: not dry conform
-    local new_dialog = Dialog{
+    
+    -- todo: not DRY. Think about at get_sub_dialog() function
+    dialog = Dialog{
         title="Sort Pixels",
         onclose=function()
             if (should_apply == false) then
                 -- reset
                 app.activeCel.image = backup_img
                 app.refresh()
-                --app.alert("Restting image")
             else
                 should_apply = false
             end
-            
+
             sub_dialogs.sorter_dialog = nil
         end
     }
     
-    dialog = new_dialog
-    
     dialog 
             
-        :check{
-            id="debug",
-            label="debug",
-            selected=false,
-            onclick=function()
-                util.debug=dialog.data.debug
-            end
-        }
-
         :slider{
             id="upper",
             label="Upper threshold",
@@ -191,11 +182,15 @@ sorter.show = function(x,y)
             end
         }
             
-
         :show{
             wait=false,
             bounds=Rectangle(x,y,width,height);
         }
+
+    -- create a new sprite to preview the cutoff
+    cutoff_sprite = Sprite(app.activeSprite.width, app.activeSprite.height)
+    app.command.FitScreen()
+    sorter.cutoff(dialog.data.lower, dialog.data.upper)
     
     return dialog
 end
