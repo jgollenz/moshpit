@@ -6,6 +6,12 @@ util.dprint = function (string)
     if util.debug then print(string) end
 end
 
+-- todo
+util.fprint = function (string, table)
+    -- each element of the table is one variable in the string
+    -- this probably needs some string juggling
+end
+
 util.count = function (table)
     local amount = 0
     for _ in pairs(table) do amount = amount + 1 end

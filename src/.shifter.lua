@@ -26,7 +26,6 @@ shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount,
     local rowNumber = -1
     for i=1, rowAmount, 1 do
         -- fix: make this optional, because it leads to cool effects actually
-        
         rowNumber = rowsToShift[i]
         row = util.get_row(rowNumber, shiftedImage)
         shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
