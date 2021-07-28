@@ -71,8 +71,8 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
             end
         }
         
@@ -80,8 +80,8 @@ shifter.show = function(x,y)
             id="row_fixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.row_fixed, { "fixed_row_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.row_range, { "upper_row_amount", "lower_row_amount" }, dialog)
             end
         }
             
@@ -115,8 +115,8 @@ shifter.show = function(x,y)
             label="Type",
             text="Range",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
             end
         }
 
@@ -124,8 +124,8 @@ shifter.show = function(x,y)
             id="shift_fixed",
             text="Fixed",
             onclick=function()
-                util.toggle_UI_Elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
-                util.toggle_UI_Elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.shift_fixed, { "fixed_shift_amount" }, dialog)
+                util.toggle_ui_elements(dialog.data.shift_range, { "upper_shift_amount", "lower_shift_amount" }, dialog)
             end
         }
             
