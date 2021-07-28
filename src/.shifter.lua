@@ -89,7 +89,7 @@ shifter.show = function(x,y)
             id="upper_row_amount",
             label="Max",
             min=0,
-            max=image.height, -- bug
+            max=image.height, 
             value=image.height * 0.7} 
            
         :slider{

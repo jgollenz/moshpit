@@ -41,7 +41,7 @@ sorter.sort_row = function(row, attribute)
     return function()
         i = i + 1
         if keys[i] then
-            return i, keys[i], positions[i], key_values[keys[i]]
+            return i, positions[i], key_values[keys[i]]
         end
     end
     
@@ -66,8 +66,6 @@ sorter.pixel_sort = function (lower,upper)
         app.alert("lower threshold must be less than upper threshold")
         return
     end
-
-    math.randomseed(os.time())
     
     if cutoff_sprite_opened then 
         app.activeSprite:close()
@@ -77,24 +75,12 @@ sorter.pixel_sort = function (lower,upper)
     local img = app.activeCel.image:clone()
     local row_count = img.height - 1
 
-    local color_mode
-    if img.colorMode == ColorMode.RGB then
-        color_mode = app.pixelColor.rgba
-    elseif img.colorMode == ColorMode.GRAY then
-        color_mode = app.pixelColor.graya
-    end
-
     for row_number = 0, row_count, 1 do
         row = util.get_row(row_number, img)
         row = sorter.filter_row(row, hsl.lightness_from_pixel, lower, upper)
-        -- todo: get this hue outta here
-        for i, hue, position, pixel in sorter.sort_row(row, hsl.hue_from_pixel) do
-
-            if (img.colorMode == ColorMode.INDEXED) then
-                img:drawPixel(position-1, row_number, pixel)
-            else
-                img:drawPixel(position-1, row_number, pixel)    
-            end
+        -- todo: 1. enable generic sorting criteria 2. don't allow hue_from_pixel when in grayscale mode
+        for i, position, pixel in sorter.sort_row(row, hsl.hue_from_pixel) do
+            img:drawPixel(position-1, row_number, pixel)    
         end
     end
 
