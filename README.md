@@ -20,5 +20,10 @@ You need at least Aseprite v1.2.10 for this tool to work
 
 ## Effects
 
-- Line shifting
-- Pixel sorting
+### Line shifting
+
+![alt text](https://github.com/jgollenz/moshpit/blob/main/img/pixel-shift-preview.gif)
+
+### Pixel sorting
+
+![alt text](https://github.com/jgollenz/moshpit/blob/main/img/pixel-sort-preview.gif)
