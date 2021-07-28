@@ -2,7 +2,7 @@
 
 -- bounds
 local width = 120
-local height = 150
+local height = 120
 local cutoff_sprite
 local cutoff_sprite_opened = false
 

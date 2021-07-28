@@ -13,7 +13,7 @@ end
 local xAnchor = 100
 local yAnchor = 50
 local dialog_width = 160
-local dialog_height = 80
+local dialog_height = 60
 
 local should_apply = false
 sub_dialogs = {}
