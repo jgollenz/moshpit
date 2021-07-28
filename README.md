@@ -37,3 +37,6 @@ DISCLAIMER: do NOT switch tabs while selecting the threshold. Currently not work
 - Vertical line shifting / pixel sorting
 - Randomization
 - Variable line thickness (for line shifting)
+- V-sync issues / screen tearing
+- Scanlines
+- Corruption artefacts
