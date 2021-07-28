@@ -12,12 +12,10 @@ hsl.hue_from_pixel = function (pixel)
         color = Color(pixel)
 
     else
-        -- todo: alert the user about this, but not here
-        --app.alert("Hue cannot be calculated from grayscale image")
         return color
     end
 
-    return color.hue
+    return color.hslHue
 end
 
 hsl.hue_from_rgb = function (r, g, b)
@@ -53,7 +51,8 @@ hsl.lightness_from_pixel = function (pixel)
     local color_mode = app.activeCel.image.colorMode
 
     if color_mode == ColorMode.INDEXED then
-        local palette = app.activeSprite.palettes[1]
+        -- todo: this probably does not work anymore, bcs we are already in a new sprite with a new palette in the cutoff
+        local palette = app.activeSprite.palettes[1] 
         color = palette:getColor(pixel)
 
     elseif color_mode == ColorMode.RGB  or color_mode == ColorMode.GRAY then
@@ -64,8 +63,7 @@ hsl.lightness_from_pixel = function (pixel)
         return color
     end
     
-    --print(color.lightness)
-    return color.lightness * 100
+    return color.hslLightness * 100
 end
 
 hsl.lightness_from_rgb = function (r, g, b)
