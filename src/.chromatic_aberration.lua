@@ -1,4 +1,6 @@
-﻿chroma = {}
+﻿-- todo
+
+chroma = {}
 
 chroma.aberration = function () 
     
