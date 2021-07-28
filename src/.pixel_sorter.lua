@@ -113,23 +113,14 @@ sorter.cutoff = function (lower, upper)
 
     local img = app.activeCel.image:clone()
 
-    -- 1. go through all pixels
     for pixel in sorter_backup_img:pixels() do
-        local rgba = app.pixelColor.rgba
-        local actual_pixel = pixel()
-
-        -- 2. get pixel lightness
-        local red = app.pixelColor.rgbaR(pixel())
-        local green = app.pixelColor.rgbaG(pixel())
-        local blue = app.pixelColor.rgbaB(pixel())
-        local lightness = hsl.lightness_from_pixel(actual_pixel)
-        local alpha = app.pixelColor.rgbaA(pixel())
+        local lightness = hsl.lightness_from_pixel(pixel())
         if lightness > upper or lightness < lower then
-            -- 3. make pixel black
-            img:drawPixel(pixel.x, pixel.y, rgba(0, 0, 0, alpha))
+            -- black
+            img:drawPixel(pixel.x, pixel.y, glob.rgba(0, 0, 0, 255))
         else
-            -- 4. make pixel white
-            img:drawPixel(pixel.x, pixel.y, rgba(255, 255, 255, alpha))
+            -- white
+            img:drawPixel(pixel.x, pixel.y, glob.rgba(255, 255, 255, 255))
         end
     end
 

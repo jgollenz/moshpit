@@ -8,6 +8,9 @@ if not cel then
     return app.alert("There is no active image")
 end
 
+glob = {}
+glob.rgba = app.pixelColor.rgba
+
 -- starting position / dimensions
 -- todo: how can this be made adaptive?
 local xAnchor = 100
