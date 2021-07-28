@@ -36,3 +36,4 @@ DISCLAIMER: do NOT switch tabs while selecting the threshold. Currently not work
 - Chromatic aberration
 - Vertical line shifting / pixel sorting
 - Randomization
+- Variable line thickness (for line shifting)
