@@ -93,12 +93,7 @@ sorter.pixel_sort = function (lower,upper)
             if (img.colorMode == ColorMode.INDEXED) then
                 img:drawPixel(position-1, row_number, pixel)
             else
-                local red = app.pixelColor.rgbaR(pixel)
-                local green = app.pixelColor.rgbaG(pixel)
-                local blue = app.pixelColor.rgbaB(pixel)
-                local alpha = app.pixelColor.rgbaA(pixel)
-                -- todo: this should work with just handing over pixel. but it doesn't
-                img:drawPixel(position-1, row_number, color_mode(red, green, blue, alpha))    
+                img:drawPixel(position-1, row_number, pixel)    
             end
         end
     end
