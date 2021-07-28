@@ -6,7 +6,7 @@ An Aseprite tool for glitch art
 
 You need at least Aseprite v1.2.10 for this tool to work
 
-1. Download `moshpit.zip`
+1. Download `moshpit-[version].zip`
 2. Unzip and move the `moshpit` folder into the Aseprite scripts folder. If you are unsure where that folder is located, you can open it with `File > Scripts > Open Scripts Folder` 
 
 ![alt text](https://github.com/jgollenz/moshpit/blob/main/img/open-scripts-folder.png)
@@ -26,4 +26,12 @@ You need at least Aseprite v1.2.10 for this tool to work
 
 ### Pixel sorting
 
+DISCLAIMER: do NOT switch tabs while selecting the threshold. Currently not working correctly in Indexed and Grayscale mode
+
 ![alt text](https://github.com/jgollenz/moshpit/blob/main/img/pixel-sort-preview.gif)
+
+
+## Upcoming
+
+- Chromatic aberration
+- Vertical line shifting / pixel sorting
