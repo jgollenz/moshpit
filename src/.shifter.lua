@@ -7,37 +7,37 @@ local height = 200
 shifter = {}
 
 -- todo: add random pixel shift
-shifter.shift_rows = function (lowerRowAmount, upperRowAmount, lowerShiftAmount, upperShiftAmount)
+shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_amount, upper_shift_amount)
     
-    local shiftedImage = app.activeCel.image:clone()
-    local rowAmount = math.random(lowerRowAmount, upperRowAmount)
+    local shifted_image = app.activeCel.image:clone()
+    local row_amount = math.random(lower_row_amount, upper_row_amount)
     
-    rowsToShift = {}
+    rows_to_shift = {}
 
     -- get rows that will be shifted
-    for i=1, rowAmount, 1 do
+    for i=1, row_amount, 1 do
         repeat
-            nextRow = math.random(0, shiftedImage.height-1)
-        until util.contains(rowsToShift, nextRow) == false
+            next_row = math.random(0, shifted_image.height - 1)
+        until util.contains(rows_to_shift, next_row) == false
         
-        table.insert (rowsToShift, nextRow)        
+        table.insert (rows_to_shift, nextRow)        
     end
 
-    local rowNumber = -1
-    for i=1, rowAmount, 1 do
+    local row_number = -1
+    for i=1, row_amount, 1 do
         -- fix: make this optional, because it leads to cool effects actually
-        rowNumber = rowsToShift[i]
-        row = util.get_row(rowNumber, shiftedImage)
-        shift_amount = math.random(lowerShiftAmount, upperShiftAmount)
+        row_number = rows_to_shift[i]
+        row = util.get_row(row_number, shifted_image)
+        shift_amount = math.random(lower_shift_amount, upper_shift_amount)
         
         for x, pixel in pairs(row) do
             pixel = row[x]
            --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) -- this is the culprit, it should not be a different amount for each pixel but for each row
-            shiftedImage:drawPixel((x-1)+shift_amount, rowNumber, pixel)
+            shifted_image:drawPixel((x - 1) + shift_amount, row_number, pixel)
         end
     end
     
-    app.activeCel.image = shiftedImage
+    app.activeCel.image = shifted_image
     app.refresh()
 end
 
@@ -88,14 +88,14 @@ shifter.show = function(x,y)
         :slider{
             id="upper_row_amount",
             label="Max",
-            min=0,
+            min=1,
             max=image.height, 
             value=image.height * 0.7} 
            
         :slider{
             id="lower_row_amount",
             label="Min",
-            min=0,
+            min=1,
             max=image.height,
             value=image.height * 0.3}
             
