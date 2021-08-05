@@ -11,29 +11,31 @@ shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_a
     
     local shifted_image = app.activeCel.image:clone()
     local row_amount = math.random(lower_row_amount, upper_row_amount)
-    
-    rows_to_shift = {}
+    local rows_to_shift = {}
 
     -- get rows that will be shifted
     for i=1, row_amount, 1 do
+        local next_row
         repeat
             next_row = math.random(0, shifted_image.height - 1)
         until util.contains(rows_to_shift, next_row) == false
         
-        table.insert (rows_to_shift, nextRow)        
+        table.insert (rows_to_shift, next_row)        
     end
 
     local row_number = -1
     for i=1, row_amount, 1 do
         -- fix: make this optional, because it leads to cool effects actually
         row_number = rows_to_shift[i]
-        row = util.get_row(row_number, shifted_image)
-        shift_amount = math.random(lower_shift_amount, upper_shift_amount)
-        
-        for x, pixel in pairs(row) do
-            pixel = row[x]
-           --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) -- this is the culprit, it should not be a different amount for each pixel but for each row
-            shifted_image:drawPixel((x - 1) + shift_amount, row_number, pixel)
+        -- todo: expose magic number to users
+        local slice = util.get_rows(row_number, 3, shifted_image)
+        local shift_amount = math.random(lower_shift_amount, upper_shift_amount)
+        for y, row in pairs(slice) do 
+            for x, pixel in pairs(row) do
+                -- this is the culprit, it should not be a different amount for each pixel but for each row
+                --shift_amount = math.random(lowerShiftAmount, upperShiftAmount) 
+                shifted_image:drawPixel((x - 1) + shift_amount, row_number + (y - 1), pixel)
+            end
         end
     end
     

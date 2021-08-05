@@ -27,14 +27,26 @@ util.toggle_ui_elements = function (toggle_state, elements, dialog)
     end
 end
 
-util.get_row = function (row_number, img)
+-- todo: put image first
+-- returns a table where each element is a pixel of a row
+util.get_row = function (row_number, image)
     local row = {}
 
-    for i=0, img.width-1, 1 do
-        table.insert(row, img:getPixel(i, row_number))
+    for x = 0, image.width - 1, 1 do
+        table.insert(row, image:getPixel(x, row_number))
     end
 
     return row
+end
+
+-- returns a table where each element is a table representing a row
+util.get_rows = function (starting_row, row_amount, image)
+    local rows = {}
+    for row_number = starting_row, starting_row + (row_amount - 1), 1 do 
+        table.insert(rows, util.get_row(row_number, image))
+    end
+    
+    return rows
 end
 
 util.contains = function (table, value)
