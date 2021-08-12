@@ -1,4 +1,6 @@
-﻿local dialog = -1
+﻿-- todo: this is seriously broken. Only works when your sprite is the rightmost you have open. 
+
+local dialog = -1
 
 -- bounds
 local width = 120

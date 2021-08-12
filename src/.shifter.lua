@@ -6,10 +6,28 @@ local height = 200
 
 shifter = {}
 
+shifter.expand_cel_bounds = function (cel, width, height, x_image_target, y_image_target, x_origin, y_origin)
+    local expanded_image = Image(width, height, cel.image.colorMode)
+    expanded_image:drawImage(cel.image, x_image_target, y_image_target)
+    cel.image = expanded_image
+    cel.position = Point(x_origin, y_origin)
+    
+    return cel
+end
+
 -- todo: add random pixel shift
 shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_amount, upper_shift_amount)
     
-    local shifted_image = app.activeCel.image:clone()
+    local shifted_image;
+    local active_cel = app.activeCel
+    if (active_cel.image.width < app.activeSprite.width) then
+        shifted_image = shifter.expand_cel_bounds(active_cel,
+                app.activeSprite.width, active_cel.image.height, 
+                active_cel.position.x, 0, 0, active_cel.position.y).image
+    else
+        shifted_image = active_cel.image:clone()
+    end
+    
     local row_amount = math.random(lower_row_amount, upper_row_amount)
     local rows_to_shift = {}
 
@@ -28,7 +46,7 @@ shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_a
         -- fix: make this optional, because it leads to cool effects actually
         row_number = rows_to_shift[i]
         -- todo: expose magic number to users
-        local slice = util.get_rows(row_number, 3, shifted_image)
+        local slice = util.get_rows(row_number, 1, shifted_image)
         local shift_amount = math.random(lower_shift_amount, upper_shift_amount)
         for y, row in pairs(slice) do 
             for x, pixel in pairs(row) do
@@ -46,7 +64,7 @@ end
 shifter.show = function(x,y)
 
     local image = app.activeCel.image
-    local backup_img = image:clone()
+    local backup_img = image:clone() -- todo: save all cels + original position
     local new_dialog = Dialog{
         title="Shift Rows",
         onclose=function()
