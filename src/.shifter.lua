@@ -6,24 +6,27 @@ local height = 200
 
 shifter = {}
 
+-- refactor: move to util?
 shifter.expand_cel_bounds = function (cel, width, height, x_image_target, y_image_target, x_origin, y_origin)
+    -- todo: undoing this bound extending is a pain. Need to find a way to do it better
     local expanded_image = Image(width, height, cel.image.colorMode)
     expanded_image:drawImage(cel.image, x_image_target, y_image_target)
     cel.image = expanded_image
-    cel.position = Point(x_origin, y_origin)
+    cel.position = Point(x_origin, y_origin) -- undoable action
     
     return cel
 end
 
 -- todo: add random pixel shift
 shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_amount, upper_shift_amount)
-    
     local shifted_image;
     local active_cel = app.activeCel
     if (active_cel.image.width < app.activeSprite.width) then
+        -- extend cel bounds, to allow shifted pixels to have x positions outside the original width of the image
         shifted_image = shifter.expand_cel_bounds(active_cel,
                 app.activeSprite.width, active_cel.image.height, 
-                active_cel.position.x, 0, 0, active_cel.position.y).image
+                active_cel.position.x, 0, 
+                0, active_cel.position.y).image
     else
         shifted_image = active_cel.image:clone()
     end
@@ -43,9 +46,9 @@ shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_a
 
     local row_number = -1
     for i=1, row_amount, 1 do
-        -- fix: make this optional, because it leads to cool effects actually
+        -- feat: make this optional, because it leads to cool effects actually
         row_number = rows_to_shift[i]
-        -- todo: expose magic number to users
+        -- feat: expose magic number to users
         local slice = util.get_rows(row_number, 1, shifted_image)
         local shift_amount = math.random(lower_shift_amount, upper_shift_amount)
         for y, row in pairs(slice) do 
@@ -64,7 +67,7 @@ end
 shifter.show = function(x,y)
 
     local image = app.activeCel.image
-    local backup_img = image:clone() -- todo: save all cels + original position
+    local backup_img = image:clone() -- bug: save all cels + original position
     local new_dialog = Dialog{
         title="Shift Rows",
         onclose=function()
@@ -149,7 +152,6 @@ shifter.show = function(x,y)
             end
         }
             
-        -- bug: this does not work as expected, because the image of the cell may be smaller than the canvas 
         :slider{
             id="upper_shift_amount",
             label="Max",
@@ -164,7 +166,7 @@ shifter.show = function(x,y)
             max=image.width,
             value=-5}
             
-        :number{ -- todo: indicate that this can also be negative
+        :number{ -- feat: indicate that this can also be negative
             visible=false,
             id="fixed_shift_amount",
             decimals=integer
