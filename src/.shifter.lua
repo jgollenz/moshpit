@@ -17,7 +17,25 @@ shifter.expand_cel_bounds = function (cel, width, height, x_image_target, y_imag
     return cel
 end
 
--- todo: add random pixel shift
+--[[
+    Returns a table of {row_amount} random indices of rows, non-duplicate 
+]]
+shifter.get_row_indices = function (row_amount, image_height)
+    local row_indices = {}
+
+    -- perf: not really happy with this solution
+    for i = 1, row_amount, 1 do
+        local next_row
+        repeat
+            next_row = math.random(0, image_height - 1)
+        until util.contains(row_indices, next_row) == false
+        table.insert (row_indices, next_row)
+    end
+    
+    return row_indices
+end
+
+-- feat: add random pixel shift
 shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_amount, upper_shift_amount)
     local shifted_image;
     local active_cel = app.activeCel
@@ -32,17 +50,7 @@ shifter.shift_rows = function (lower_row_amount, upper_row_amount, lower_shift_a
     end
     
     local row_amount = math.random(lower_row_amount, upper_row_amount)
-    local rows_to_shift = {}
-
-    -- get rows that will be shifted
-    for i=1, row_amount, 1 do
-        local next_row
-        repeat
-            next_row = math.random(0, shifted_image.height - 1)
-        until util.contains(rows_to_shift, next_row) == false
-        
-        table.insert (rows_to_shift, next_row)        
-    end
+    local rows_to_shift = shifter.get_row_indices(row_amount, shifted_image.height)
 
     local row_number = -1
     for i=1, row_amount, 1 do
