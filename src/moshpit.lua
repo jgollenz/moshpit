@@ -21,51 +21,55 @@ local dialog_height = 60
 local should_apply = false
 sub_dialogs = {}
 
-local dlg = Dialog{ 
-    title="Moshpit", 
-    onclose=function()
-        if (should_apply == false) then
+local dlg = Dialog({
+    title = "Moshpit",
+    onclose = function()
+        if should_apply == false then
             app.refresh()
         else
             should_apply = false
         end
-        
+
         for _, sub_dialog in pairs(sub_dialogs) do
             sub_dialog:close()
         end
-    end}
+    end,
+})
 
 dlg
-    :button{
-        id="sort",
-        text="Pixel Sort",
-        onclick=function()
+    :button({
+        id = "sort",
+        text = "Pixel Sort",
+        onclick = function()
             if sub_dialogs.sorter_dialog == nil then
                 local bounds = dlg.bounds
-                sub_dialogs.sorter_dialog = sorter.show(bounds.x, bounds.y+bounds.height)
+                sub_dialogs.sorter_dialog = sorter.show(
+                    bounds.x,
+                    bounds.y + bounds.height
+                )
             else
                 sub_dialogs.sorter_dialog:close()
             end
-        end
-    }
-
+        end,
+    })
     :newrow()
-
--- todo: 1. not DRY 2. stays open when other dialog is opened. should prob. close
-    :button{
-        id="shift",
-        text="Pixel Shift",
-        onclick=function()
+    -- todo: 1. not DRY 2. stays open when other dialog is opened. should prob. close
+    :button({
+        id = "shift",
+        text = "Pixel Shift",
+        onclick = function()
             if sub_dialogs.shifter_dialog == nil then
                 local bounds = dlg.bounds
-                sub_dialogs.shifter_dialog = shifter.show(bounds.x, bounds.y+bounds.height)
+                sub_dialogs.shifter_dialog = shifter.show(
+                    bounds.x,
+                    bounds.y + bounds.height
+                )
             else
                 sub_dialogs.shifter_dialog:close()
             end
-        end
-    }       
-
-    :show {
-        wait=false,
-        bounds=Rectangle(xAnchor,yAnchor, dialog_width, dialog_height);
-    }
+        end,
+    })
+    :show({
+        wait = false,
+        bounds = Rectangle(xAnchor, yAnchor, dialog_width, dialog_height),
+    })
